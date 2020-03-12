@@ -1,3 +1,5 @@
+package TinyMustache
+
 func TinyMustache(formular string, mappi map[string]string) string {
 	ss := formular
 	for i, v := range mappi {
