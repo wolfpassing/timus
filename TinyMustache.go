@@ -1,4 +1,4 @@
-package TinyMustache
+package tinymustache
 
 import (
 	"regexp"
