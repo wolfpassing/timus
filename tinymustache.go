@@ -1,4 +1,4 @@
-package tinymustache
+package timus
 
 import (
 	"regexp"
