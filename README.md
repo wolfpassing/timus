@@ -12,19 +12,19 @@ Examples:
 `USER {{username}} last login {{date_and_time}}`      
 will be 
 
-##Getting tiny mustache
+#Getting tiny mustache
 
 `go get github.com/wolfpassing/timus` on command line   
 or  
 `import "github.com/wolfpassing/timus"`  in your go source
 
-##Initialize tiny mustache
+#Initialize tiny mustache
 First we need an TinyMustache object, that holds all the information
 ```go
 myTiMus := timus.NewMustache()
 ```
 
-##Simple use of mustache replacement
+#Simple use of mustache replacement
 Now we can feed this object with simple key and value information
 ```go
 myTiMus.Add("pi",math.Pi)                   //float, {{ and }} will be added to key
@@ -39,7 +39,7 @@ replacedString := myTiMus.Mustache("The constant 'e' = {{eulers}}")
 ``` 
 >As long as you are only replacing one value a simple fmt.Sprintf would do the same job of course. The power lays in multiple occurrences of multiple replacements
 
-##Using the evaluator
+#Using the evaluator
 Now a step further we use the evaluator for a simple task
 ```go
 result := myTiMus.Evaluate("100+10+1")
@@ -52,4 +52,22 @@ evaluateMe := "( {{radius}} * 2) * {{pi}} "
 result := myTiMus.Evaluate(myTiMus.Mustache(evaluateMe))
 ``` 
 
-#
+#Merge tiny mustache 
+```go
+firstTiMus.Merge(secondTiMus)
+```
+#Extracting from a structure
+```go   
+struct Car type {
+    Brand               string      `mustache:"brand"`
+    Wheels              string      `mustache:"wheels"`
+    HorsePower          int         `mustache:"ps"`
+    Doors               int         `mustache:"-"`
+    AutomaticGearBox    bool        `mustache:"autoGear"`
+}
+```
+
+
+```go
+extractedTiMus.Extract(carObject)
+```
