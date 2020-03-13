@@ -2,6 +2,7 @@ package timus
 
 import (
 	"regexp"
+	"strings"
 )
 
 import (
@@ -103,8 +104,9 @@ func parse(x []byte, st int) float64 {
 	return 0.0
 }
 
-func (m *TinyMustache)Parse(s string) float64 {
+func (m *TinyMustache)Evaluate(s string) float64 {
 	//fmt.Println("Parse (", s, ")")
+	s = strings.Replace(s," ","",-1)
 	bs := []byte(s + "\x00\x00")
 	return parse(bs, 0)
 }
