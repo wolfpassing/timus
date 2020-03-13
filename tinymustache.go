@@ -34,14 +34,12 @@ func strpbrk(x []byte, st int) bool {
 
 func atof(x []byte, st int) float64 {
 	var z []byte
-
 	for i := st; i < len(x); i++ {
 		if x[i] == 0x00 {
 			break
 		}
 		z = append(z, x[i])
 	}
-
 	f, err := strconv.ParseFloat(string(z), 64)
 	if err != nil {
 		return 0.0
@@ -50,14 +48,11 @@ func atof(x []byte, st int) float64 {
 }
 
 func parse(x []byte, st int) float64 {
-
 	kl := 1
 	p := st + 1
-
 	if !strpbrk(x, st) {
 		return atof(x, st)
 	}
-
 	if x[st] == SignPOpen {
 		for (x[p] != SignZero) && (kl != 0) {
 			if x[p] == SignPOpen {
@@ -68,7 +63,6 @@ func parse(x []byte, st int) float64 {
 			}
 			p++
 		}
-
 		if (kl == 0) && (x[p] == SignZero) {
 			p--
 			x[p] = SignZero
@@ -106,16 +100,13 @@ func parse(x []byte, st int) float64 {
 			p++
 		}
 	}
-
 	return 0.0
 }
 
 func (m *TinyMustache)Parse(s string) float64 {
 	//fmt.Println("Parse (", s, ")")
 	bs := []byte(s + "\x00\x00")
-
 	return parse(bs, 0)
-
 }
 
 type TinyMustache struct {
@@ -129,7 +120,6 @@ func NewMustache() *TinyMustache {
 	obj.MustacheMap = make(map[string]string)
 	obj.PfMu = regexp.MustCompile("^{{2}[^{ }]+}{2}$")
 	obj.RmMu = regexp.MustCompile("([a-zA-Z0-9_.,]+)")
-
 	return &obj
 }
 
