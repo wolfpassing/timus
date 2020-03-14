@@ -11,13 +11,13 @@ Examples:
 `<H1>{{header}}</H1>`  
 `USER {{username}} last login {{date_and_time}}`      
 
-#Getting tiny mustache
+##Getting tiny mustache
 
 `go get github.com/wolfpassing/timus` on command line   
 or  
 `import "github.com/wolfpassing/timus"`  in your go source
 
-#Initialize tiny mustache
+###Initialize tiny mustache
 First we need an TinyMustache object, that holds all the information
 ```go
 myTiMus := timus.NewMustache()
