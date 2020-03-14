@@ -1,6 +1,7 @@
 package timus
 
 import (
+	"reflect"
 	"regexp"
 	"strings"
 )
@@ -104,9 +105,9 @@ func parse(x []byte, st int) float64 {
 	return 0.0
 }
 
-func (m *TinyMustache)Evaluate(s string) float64 {
+func (m *TinyMustache) Evaluate(s string) float64 {
 	//fmt.Println("Parse (", s, ")")
-	s = strings.Replace(s," ","",-1)
+	s = strings.Replace(s, " ", "", -1)
 	bs := []byte(s + "\x00\x00")
 	return parse(bs, 0)
 }
@@ -128,6 +129,19 @@ func NewMustache() *TinyMustache {
 func (m *TinyMustache) Merge(x map[string]string) {
 	for key, value := range x {
 		m.MustacheMap[key] = value
+	}
+}
+
+func (m *TinyMustache) ImportStruct(s interface{}) {
+	tagName := "mustache"
+	v := reflect.ValueOf(s)
+	for i := 0; i < v.NumField(); i++ {
+		tag := v.Type().Field(i).Tag.Get(tagName)
+		if tag == "" || tag == "-" {
+			continue
+		}
+		args := strings.Split(tag, ",")
+		m.Add(args[0], v.Field(i).Interface())
 	}
 }
 
