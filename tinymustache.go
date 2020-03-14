@@ -132,7 +132,7 @@ func (m *TinyMustache) Merge(x map[string]string) {
 	}
 }
 
-func (m *TinyMustache) ImportStruct(s interface{}) {
+func (m *TinyMustache) Extract(s interface{}) {
 	tagName := "mustache"
 	v := reflect.ValueOf(s)
 	for i := 0; i < v.NumField(); i++ {
