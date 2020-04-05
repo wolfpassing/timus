@@ -141,6 +141,9 @@ func (m *TinyMustache) Extract(s interface{}) {
 			continue
 		}
 		args := strings.Split(tag, ",")
+		if len(args) == 0 {
+			continue
+		}
 		m.Add(args[0], v.Field(i).Interface())
 	}
 }
@@ -167,7 +170,6 @@ func (m *TinyMustache) Add(key string, i interface{}) error {
 func (m *TinyMustache) Mustache(formular string) string {
 	ss := formular
 	for i, v := range m.MustacheMap {
-		fmt.Println(i, v)
 		re := regexp.MustCompile(i)
 		ss = re.ReplaceAllString(ss, v)
 	}

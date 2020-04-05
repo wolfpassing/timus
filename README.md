@@ -1,5 +1,6 @@
 # Tiny Mustache & Eval
 **Lightweight Mustache logic-less template implementation including a evaluation parser**
+Actual version v1.0
 
 For some projects it is usesful to do calculations with formulas coming from a configuration.
 Nothing high sophisticated, but in detail it may be tricky
