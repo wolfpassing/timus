@@ -1,3 +1,6 @@
+/*
+(C) 2020 Wolfpassing
+*/
 package timus
 
 import (
