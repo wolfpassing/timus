@@ -85,14 +85,6 @@ func parse(x []byte, st int) float64 {
 				kl--
 			}
 			if (kl == 0) && (i == 0) {
-				if x[p] == SignMultiply {
-					x[p] = SignZero
-					return parse(x, st) * parse(x, p+1)
-				}
-				if x[p] == SignDivide {
-					x[p] = SignZero
-					return parse(x, st) / parse(x, p+1)
-				}
 				if x[p] == SignPlus {
 					x[p] = SignZero
 					return parse(x, st) + parse(x, p+1)
@@ -101,6 +93,14 @@ func parse(x []byte, st int) float64 {
 					x[p] = SignZero
 					return parse(x, st) - parse(x, p+1)
 				}
+				if x[p] == SignMultiply {
+					x[p] = SignZero
+					return parse(x, st) * parse(x, p+1)
+				}
+				if x[p] == SignDivide {
+					x[p] = SignZero
+					return parse(x, st) / parse(x, p+1)
+				}
 			}
 			p++
 		}
@@ -108,7 +108,35 @@ func parse(x []byte, st int) float64 {
 	return 0.0
 }
 
-func (m *TinyMustache) Evaluate(s string) float64 {
+func (m *TinyMustache) ParseCommas(c int ) {
+	m.ParserCommas = c
+}
+
+func (m *TinyMustache) Evaluate(s string) string {
+
+	b := m.ParseList(s)
+
+	for _, ss := range b {
+
+//		fmt.Println(ss)
+
+		sss := m.ParserNormalize.FindString(ss)
+//		fmt.Println(sss)
+		result := m.Calculate(sss)
+//		fmt.Println("Result", result)
+
+		xx := fmt.Sprintf("%%.%df", m.ParserCommas)
+//		fmt.Println(xx)
+		s = strings.Replace(s, ss, fmt.Sprintf(xx, result), 1)
+
+//		fmt.Println(a)
+
+	}
+
+return s
+}
+
+func (m *TinyMustache) Calculate(s string) float64 {
 	//fmt.Println("Parse (", s, ")")
 	s = strings.Replace(s, " ", "", -1)
 	bs := []byte(s + "\x00\x00")
@@ -116,17 +144,27 @@ func (m *TinyMustache) Evaluate(s string) float64 {
 }
 
 type TinyMustache struct {
-	MustacheMap map[string]string
-	PfMu        *regexp.Regexp
-	RmMu        *regexp.Regexp
+	MustacheMap       map[string]string
+	PerfectMustache   *regexp.Regexp
+	NormalizeMustache *regexp.Regexp
+	Parser            *regexp.Regexp
+	ParserNormalize   *regexp.Regexp
+	ParserCommas      int
 }
 
 func NewMustache() *TinyMustache {
 	obj := TinyMustache{}
 	obj.MustacheMap = make(map[string]string)
-	obj.PfMu = regexp.MustCompile("^{{2}[^{ }]+}{2}$")
-	obj.RmMu = regexp.MustCompile("([a-zA-Z0-9_.,]+)")
+	obj.PerfectMustache = regexp.MustCompile("^{{2}[^{ }]+}{2}$")
+	obj.NormalizeMustache = regexp.MustCompile("([a-zA-Z0-9_.,]+)")
+	obj.Parser = regexp.MustCompile("<%(.*?)%>")
+	obj.ParserNormalize = regexp.MustCompile("([0-9*+.*\\-+() /]+)")
+	obj.ParserCommas = 2
 	return &obj
+}
+
+func (m *TinyMustache) ParseList(s string) []string {
+	return m.Parser.FindAllString(s, -1)
 }
 
 func (m *TinyMustache) Merge(x map[string]string) {
@@ -153,8 +191,8 @@ func (m *TinyMustache) Extract(s interface{}) {
 
 func (m *TinyMustache) Add(key string, i interface{}) error {
 	//Regex check if perfect key = ^\{{2}[^{ }]+\}{2}$
-	if !m.PfMu.Match([]byte(key)) {
-		key = m.RmMu.FindString(key)
+	if !m.PerfectMustache.Match([]byte(key)) {
+		key = m.NormalizeMustache.FindString(key)
 		key = "{{" + key + "}}"
 	}
 	switch v := i.(type) {
